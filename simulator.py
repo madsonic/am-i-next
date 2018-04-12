@@ -91,19 +91,19 @@ def main(argv):
 
     print ("simulating FCFS ----")
     FCFS_schedule, FCFS_avg_waiting_time =  FCFS_scheduling(process_list)
-    write_output('FCFS.txt', FCFS_schedule, FCFS_avg_waiting_time )
+    write_output('output/FCFS.txt', FCFS_schedule, FCFS_avg_waiting_time )
 
     print ("simulating RR ----")
     RR_schedule, RR_avg_waiting_time =  RR_scheduling(process_list,time_quantum = 2)
-    write_output('RR.txt', RR_schedule, RR_avg_waiting_time )
+    write_output('output/RR.txt', RR_schedule, RR_avg_waiting_time )
 
     print ("simulating SRTF ----")
     SRTF_schedule, SRTF_avg_waiting_time =  SRTF_scheduling(process_list)
-    write_output('SRTF.txt', SRTF_schedule, SRTF_avg_waiting_time )
+    write_output('output/SRTF.txt', SRTF_schedule, SRTF_avg_waiting_time )
 
     print ("simulating SJF ----")
     SJF_schedule, SJF_avg_waiting_time =  SJF_scheduling(process_list, alpha = 0.5)
-    write_output('SJF.txt', SJF_schedule, SJF_avg_waiting_time )
+    write_output('output/SJF.txt', SJF_schedule, SJF_avg_waiting_time )
 
 if __name__ == '__main__':
     main(sys.argv[1:])
