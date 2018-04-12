@@ -57,7 +57,10 @@ def SRTF_scheduling(process_list):
 def SJF_scheduling(process_list, alpha):
     return (["to be completed, scheduling SJF without using information from process.burst_time"],0.0)
 
-
+"""
+each line in input file will be read as
+pid arriving_time burst_time
+"""
 def read_input():
     result = []
     with open(input_file) as f:
