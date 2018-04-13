@@ -20,6 +20,7 @@ Revision 2:
 import sys
 
 from collections import deque
+from heapq import heappush, heappop
 from copy import deepcopy
 
 input_file = 'input.txt'
@@ -116,7 +117,54 @@ def RR_scheduling(process_list, time_quantum):
     return schedule, average_waiting_time
 
 def SRTF_scheduling(process_list):
-    return (["to be completed, scheduling process_list on SRTF, using process.burst_time to calculate the remaining time of the current process "], 0.0)
+    processes = deque(deepcopy(process_list))
+    ready_queue = [] # uses a min heap
+    running = None
+    schedule = []
+    current_time = 0
+    waiting_time = 0
+    num_processes = len(processes)
+
+    while processes or ready_queue:
+        # new process ready
+        if processes and current_time == processes[0].arrive_time:
+            newProcess = processes.popleft()
+
+            # pre-empt
+            if not running:
+                running = newProcess
+                waiting_time += current_time - running.arrive_time
+                schedule.append((current_time, running.id))
+            elif newProcess.burst_time < running.burst_time:
+                if running.burst_time > 0:
+                    running.arrive_time = current_time
+                    heappush(ready_queue, running)
+
+                running = newProcess
+                waiting_time += current_time - running.arrive_time
+                schedule.append((current_time, running.id))
+            else:
+                heappush(ready_queue, newProcess)
+
+        # complete
+        if running and running.burst_time == 0:
+            if ready_queue:
+                running = heappop(ready_queue)
+                waiting_time += current_time - running.arrive_time
+                schedule.append((current_time, running.id))
+            else:
+                running = None # idle
+
+        # run the process
+        if running:
+            running.burst_time -= 1
+
+        # tick
+        current_time += 1
+
+    average_waiting_time = waiting_time / float(num_processes)
+
+    return schedule, average_waiting_time
 
 def SJF_scheduling(process_list, alpha):
     return (["to be completed, scheduling SJF without using information from process.burst_time"],0.0)
