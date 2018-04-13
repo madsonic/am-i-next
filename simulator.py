@@ -19,14 +19,17 @@ Revision 2:
 '''
 import sys
 
+from collections import deque
+
 input_file = 'input.txt'
 
 class Process:
     last_scheduled_time = 0
-    def __init__(self, id, arrive_time, burst_time):
+    def __init__(self, id, arrive_time, burst_time, time_slice = 0):
         self.id = id
         self.arrive_time = arrive_time
         self.burst_time = burst_time
+        self.time_slice = time_slice
     #for printing purpose
     def __repr__(self):
         return ('[id %d : arrive_time %d,  burst_time %d]'%(self.id, self.arrive_time, self.burst_time))
