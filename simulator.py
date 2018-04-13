@@ -20,6 +20,7 @@ Revision 2:
 import sys
 
 from collections import deque
+from copy import deepcopy
 
 input_file = 'input.txt'
 
@@ -42,7 +43,7 @@ def FCFS_scheduling(process_list):
     schedule = []
     current_time = 0
     waiting_time = 0
-    for process in process_list:
+    for process in deepcopy(process_list):
         if (current_time < process.arrive_time):
             current_time = process.arrive_time
 
@@ -70,7 +71,7 @@ def RR_scheduling(process_list, time_quantum):
     if time_quantum < 1:
         return "time_quantum should be a positive integer"
 
-    processes = deque(process_list)
+    processes = deque(deepcopy(process_list))
     ready_queue = deque([]) # uses a queue
     running = None
     schedule = []
