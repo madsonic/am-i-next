@@ -54,8 +54,62 @@ def FCFS_scheduling(process_list):
 #Input: process_list, time_quantum (Positive Integer)
 #Output_1 : Schedule list contains pairs of (time_stamp, proccess_id) indicating the time switching to that proccess_id
 #Output_2 : Average Waiting Time
-def RR_scheduling(process_list, time_quantum ):
-    return (["to be completed, scheduling process_list on round robin policy with time_quantum"], 0.0)
+def RR_scheduling(process_list, time_quantum):
+    """
+    Time quantum should be a positive number
+    Running task that has left over burst time will run first even if there
+    is a new process that arrives due to the way 'leftover' task are queued
+
+    Loop invariant 1: nothing is ever inserted back to the processes queue
+
+    Loop invariant 2: A process burst time is decremented when it runs, eventually, no tasks will be requeued and ready_queue will become empty
+    """
+    if time_quantum < 1:
+        return "time_quantum should be a positive integer"
+
+    processes = deque(process_list)
+    ready_queue = deque([]) # uses a queue
+    running = None
+    schedule = []
+    current_time = 0
+    waiting_time = 0
+    num_processes = len(processes)
+
+    while processes or ready_queue:
+        # new process ready
+        if processes and current_time == processes[0].arrive_time:
+            ready_queue.append(processes.popleft())
+
+        # interrupt / yield
+        if running:
+            if running.time_slice == 0: # end of time slice
+                # requeue if uncompleted
+                if running.burst_time > 0:
+                    running.arrive_time = current_time
+                    ready_queue.append(running)
+
+                running = None
+            elif running.burst_time == 0: # completed
+                running = None
+
+        # find something to run if idling
+        if not running and ready_queue:
+            running = ready_queue.popleft()
+            running.time_slice = time_quantum
+            waiting_time += current_time - running.arrive_time
+            schedule.append((current_time, running.id))
+
+        # run the process
+        if running:
+            running.burst_time -= 1
+            running.time_slice -= 1
+
+        # tick
+        current_time += 1
+
+    average_waiting_time = waiting_time / float(num_processes)
+
+    return schedule, average_waiting_time
 
 def SRTF_scheduling(process_list):
     return (["to be completed, scheduling process_list on SRTF, using process.burst_time to calculate the remaining time of the current process "], 0.0)
@@ -97,7 +151,7 @@ def main(argv):
     write_output('output/FCFS.txt', FCFS_schedule, FCFS_avg_waiting_time )
 
     print ("simulating RR ----")
-    RR_schedule, RR_avg_waiting_time =  RR_scheduling(process_list,time_quantum = 2)
+    RR_schedule, RR_avg_waiting_time =  RR_scheduling(process_list, time_quantum = 7)
     write_output('output/RR.txt', RR_schedule, RR_avg_waiting_time )
 
     print ("simulating SRTF ----")
