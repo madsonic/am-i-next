@@ -169,6 +169,15 @@ def SRTF_scheduling(process_list):
 def SJF_scheduling(process_list, alpha):
     return (["to be completed, scheduling SJF without using information from process.burst_time"],0.0)
 
+def predict(actual_burst_time, predicted_burst_time, alpha):
+    """
+    Returns the prediction of running time using exponential averaging
+    T(n+1) = at(n) + (1-a)T(n)
+    where a = weight, T = predicted value, t = actual value
+    """
+    return alpha * actual_burst_time + (1 - alpha) * predicted_burst_time
+
+
 def read_input():
     """
     each line in input file will be read as
