@@ -27,17 +27,32 @@ input_file = 'input.txt'
 
 class Process:
     last_scheduled_time = 0
-    def __init__(self, id, arrive_time, burst_time, time_slice = 0):
+    def __init__(self, id, arrive_time, burst_time, time_slice = 0, prediction = 5):
         self.id = id
         self.arrive_time = arrive_time
         self.burst_time = burst_time
-        self.time_slice = time_slice
+
     #for printing purpose
     def __repr__(self):
         return ('[id %d : arrive_time %d,  burst_time %d]'%(self.id, self.arrive_time, self.burst_time))
 
+class ProcessRR(Process):
+    def __init__(self, id, arrive_time, burst_time, time_slice = 0):
+        super().__init__(id, arrive_time, burst_time)
+        self.time_slice = time_slice
+
+class ProcessSRTF(Process):
     def __lt__(self, other):
         return self.burst_time < other.burst_time
+
+class ProcessSJF(Process):
+    def __init__(self, id, arrive_time, burst_time, prediction = 5):
+        super().__init__(id, arrive_time, burst_time)
+        self.prediction = prediction
+
+    def __lt__(self, other):
+        return self.prediction < other.prediction
+
 
 def FCFS_scheduling(process_list):
     #store the (switching time, proccess_id) pair
@@ -72,7 +87,11 @@ def RR_scheduling(process_list, time_quantum):
     if time_quantum < 1:
         return "time_quantum should be a positive integer"
 
-    processes = deque(deepcopy(process_list))
+    rr_process_list = \
+        [ProcessRR(p.id, p.arrive_time, p.burst_time, time_quantum)
+         for p
+         in deepcopy(process_list)]
+    processes = deque(rr_process_list)
     ready_queue = deque([]) # uses a queue
     running = None
     schedule = []
@@ -117,7 +136,11 @@ def RR_scheduling(process_list, time_quantum):
     return schedule, average_waiting_time
 
 def SRTF_scheduling(process_list):
-    processes = deque(deepcopy(process_list))
+    srtf_process_list = \
+        [ProcessSRTF(p.id, p.arrive_time, p.burst_time)
+         for p
+         in deepcopy(process_list)]
+    processes = deque(srtf_process_list)
     ready_queue = [] # uses a min heap
     running = None
     schedule = []
