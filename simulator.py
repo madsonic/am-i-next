@@ -199,7 +199,60 @@ def SRTF_scheduling(process_list):
     return schedule, average_waiting_time
 
 def SJF_scheduling(process_list, alpha):
-    return (["to be completed, scheduling SJF without using information from process.burst_time"],0.0)
+    processes = deque(deepcopy(process_list))
+    ready_queue = [] # uses a min heap
+    running = None
+    schedule = []
+    processStat = {}
+    current_time = 0
+    waiting_time = 0
+    num_processes = len(processes)
+
+    while processes or ready_queue:
+        # new process ready
+        if processes and current_time == processes[0].arrive_time:
+            newProcess = processes.popleft()
+
+            # retrive record and update prediction
+            if newProcess.id in processStat:
+                record = processStat[newProcess.id]
+                prediction = predict(record.burst_time, record.prediction, alpha)
+                record.arrive_time = newProcess.arrive_time
+                record.burst_time = newProcess.burst_time
+                record.prediction = prediction
+                processStat[record.id] = record
+            else:
+                newRecord = ProcessSJF(newProcess.id, newProcess.arrive_time, newProcess.burst_time, prediction = 5)
+                processStat[newProcess.id] = newRecord
+
+            # schedule
+            if not running:
+                running = newProcess
+                waiting_time += current_time - running.arrive_time
+                schedule.append((current_time, running.id))
+            else:
+                heappush(ready_queue, processStat[newProcess.id])
+
+        # complete
+        if running and running.burst_time == 0:
+            if ready_queue:
+                next = heappop(ready_queue)
+                running = Process(next.id, next.arrive_time, next.burst_time)
+                waiting_time += current_time - running.arrive_time
+                schedule.append((current_time, running.id))
+            else:
+                running = None # idle
+
+        # run the process
+        if running:
+            running.burst_time -= 1
+
+        # tick
+        current_time += 1
+
+    average_waiting_time = waiting_time / float(num_processes)
+
+    return schedule, average_waiting_time
 
 def predict(actual_burst_time, predicted_burst_time, alpha):
     """
