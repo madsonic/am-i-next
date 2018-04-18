@@ -53,6 +53,9 @@ class ProcessSJF(Process):
     def __lt__(self, other):
         return self.prediction < other.prediction
 
+    def __repr__(self):
+        return ('[id %d : arrive_time %d,  burst_time %d, prediction %.3f]'%(self.id, self.arrive_time, self.burst_time, self.prediction))
+
 
 def FCFS_scheduling(process_list):
     #store the (switching time, proccess_id) pair
