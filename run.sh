@@ -3,7 +3,7 @@ OUTPUT_DIR="output"
 EXPECTED_DIR="expected"
 
 mkdir $OUTPUT_DIR 2> /dev/null
-rm $OUTPUT_DIR/* > /dev/null
+rm $OUTPUT_DIR/* 2> /dev/null
 python simulator.py
 
 for output in "$OUTPUT_DIR"/*; do
