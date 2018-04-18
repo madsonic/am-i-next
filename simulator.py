@@ -50,6 +50,12 @@ class ProcessSJF(Process):
         super().__init__(id, arrive_time, burst_time)
         self.prediction = prediction
 
+    def __hash__(self):
+        return self.id
+
+    def __eq__(self, other):
+        return self.id == other.id
+
     def __lt__(self, other):
         return self.prediction < other.prediction
 
