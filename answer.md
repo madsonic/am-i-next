@@ -1,3 +1,7 @@
+
+## Task 1
+[Simulation Repo Link](https://github.com/madsonic/am-i-next)
+
 ## Task 2
 ### Qns 1
 Least average time scheduler: SJF<br>
