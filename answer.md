@@ -19,4 +19,4 @@ Any scheduler would give roughly the same outcome, since they are short. But FCF
 SRTF gives the best waiting time as it eagerly serves short procesess and comes back to long processes whenever possible. Given that it is interleaving, long processes would get serve quickly and would not starve.
 
 ### Qns 3
-The scheduler will sit in front of all the cores and it would need to access the run queue of each core so that it would be able to load balance and utilise the cores efficiently.
+The scheduler will sit in front of all the cores and it would need to access the run queue of each core so that it would be able to load balance and utilise the cores efficiently. Otherwise the scheduler can used as is.
